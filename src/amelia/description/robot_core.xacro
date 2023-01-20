@@ -128,14 +128,14 @@
     </gazebo>
 
 
-    <!-- CASTER WHEEL LINK -->
-    <joint name="caster_wheel_joint" type="fixed">
+    <!-- CASTER WHEELS LINK -->
+    <joint name="caster_wheel_front_joint" type="fixed">
         <parent link="chassis"/>
-        <child link="caster_wheel"/>
+        <child link="caster_wheel_front"/>
         <origin xyz="0.24 0 0"/>
     </joint>
 
-    <link name="caster_wheel">
+    <link name="caster_wheel_front">
         <visual>
             <geometry>
                 <sphere radius="0.05"/>
@@ -152,7 +152,36 @@
         </xacro:inertial_sphere>
     </link>
 
-    <gazebo reference="caster_wheel">
+    <joint name="caster_wheel_rear_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="caster_wheel_rear"/>
+        <origin xyz="0.05 0 0"/>
+    </joint>
+
+    <link name="caster_wheel_rear">
+        <visual>
+            <geometry>
+                <sphere radius="0.05"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="0.05"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_sphere mass="0.1" radius="0.05">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_sphere>
+    </link>
+
+    <gazebo reference="caster_wheel_front">
+        <material>Gazebo/Black</material>
+        <mu1 value="0.01"/>
+        <mu2 value="0.01"/>
+    </gazebo>
+
+    <gazebo reference="caster_wheel_rear">
         <material>Gazebo/Black</material>
         <mu1 value="0.01"/>
         <mu2 value="0.01"/>
