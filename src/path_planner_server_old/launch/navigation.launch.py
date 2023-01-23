@@ -10,6 +10,8 @@ def generate_launch_description():
     bt_navigator_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'bt_navigator_yaml.yaml')
     behavior_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'behavior_yaml.yaml')
     nav2_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'amcl_config.yaml')
+    filters_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'filters.yaml')
+    waypoint_follower_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'waypoint_follower.yaml')
     map_file = os.path.join(get_package_share_directory('path_planner_server'), 'map', 'museum.yaml')
 
     return LaunchDescription([
@@ -43,6 +45,15 @@ def generate_launch_description():
             output='screen',
             parameters=[controller_yaml]
         ),
+
+        Node(
+            package='nav2_waypoint_follower',
+            executable='waypoint_follower',
+            name='waypoint_follower',
+            output='screen',
+            parameters=[waypoint_follower_yaml]
+        ),
+                        
         Node(
             package='nav2_bt_navigator',
             executable='bt_navigator',
@@ -57,6 +68,22 @@ def generate_launch_description():
             parameters=[behavior_yaml],
             output='screen'
         ),
+        Node(
+            package='nav2_map_server',
+            executable='map_server',
+            name='filter_mask_server',
+            output='screen',
+            emulate_tty=True,
+            parameters=[filters_yaml]),
+
+        Node(
+            package='nav2_map_server',
+            executable='costmap_filter_info_server',
+            name='costmap_filter_info_server',
+            output='screen',
+            emulate_tty=True,
+            parameters=[filters_yaml]),
+
         # Node(
         #     package='rviz2',
         #     executable='rviz2',
@@ -71,6 +98,13 @@ def generate_launch_description():
             output='screen',
             parameters=[{'use_sim_time': True}, 
                         {'autostart': True},
-                        {'node_names': ['map_server', 'amcl', 'planner_server', 'controller_server', 'bt_navigator', 'behavior_server']}]
+                        {'node_names': ['map_server',
+                                        'amcl',
+                                        'controller_server',
+                                        'planner_server',
+                                        'behavior_server',
+                                        'bt_navigator',
+                                        'filter_mask_server',
+                                        'costmap_filter_info_server']}]
         ),      
     ])
