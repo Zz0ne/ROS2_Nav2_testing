@@ -30,6 +30,8 @@ def generate_launch_description():
     # Get the launch directory
     bringup_dir = get_package_share_directory('path_planner_server')
 
+    filters_yaml = os.path.join(bringup_dir, 'config', 'filters.yaml')
+
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
@@ -45,7 +47,9 @@ def generate_launch_description():
                        'behavior_server',
                        'bt_navigator',
                        'waypoint_follower',
-                       'velocity_smoother']
+                       'velocity_smoother',
+                       'filter_mask_server',
+                       'costmap_filter_info_server']
 
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
@@ -178,6 +182,22 @@ def generate_launch_description():
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings +
                         [('cmd_vel', 'cmd_vel_nav'), ('cmd_vel_smoothed', 'cmd_vel')]),
+            Node(
+                package='nav2_map_server',
+                executable='map_server',
+                name='filter_mask_server',
+                output='screen',
+                emulate_tty=True,
+                parameters=[filters_yaml]),
+
+            Node(
+                package='nav2_map_server',
+                executable='costmap_filter_info_server',
+                name='costmap_filter_info_server',
+                output='screen',
+                emulate_tty=True,
+                parameters=[filters_yaml]),
+                            
             Node(
                 package='nav2_lifecycle_manager',
                 executable='lifecycle_manager',
